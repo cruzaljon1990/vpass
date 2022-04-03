@@ -6,6 +6,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -19,6 +20,7 @@ import 'package:vpass/logged_in_appbar.dart';
 import 'package:vpass/models/UserModel.dart';
 import 'package:vpass/models/VehicleModel.dart';
 import 'package:vpass/pages/login.dart';
+import 'package:vpass/pages/user.dart';
 import 'package:vpass/pages/vehicle_view.dart';
 import 'package:vpass/services/shared_preferences_service.dart';
 import 'package:vpass/services/user_service.dart';
@@ -33,6 +35,7 @@ class UserView extends StatefulWidget {
 }
 
 class _UserViewState extends State<UserView> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   UserModel? user;
   final qrKey = GlobalKey();
   TextEditingController txtFirstname = TextEditingController();
@@ -47,7 +50,6 @@ class _UserViewState extends State<UserView> {
 
   @override
   void initState() {
-    // TODO: implement initState
     refreshUser(widget.id);
     super.initState();
   }
@@ -57,7 +59,7 @@ class _UserViewState extends State<UserView> {
       context,
       PageTransition(
         type: PageTransitionType.rightToLeftWithFade,
-        child: VehicleView(vehicle: vehicle),
+        child: VehicleView(id: vehicle.id.toString()),
       ),
     );
   }
@@ -77,7 +79,7 @@ class _UserViewState extends State<UserView> {
       txtStatus = user!.status;
       txtModel.text = '';
       txtPlateNo.text = '';
-    } else if (response.statusCode == 401) {
+    } else if (response['statusCode'] == 401) {
       Navigator.of(context).pushAndRemoveUntil(
           PageTransition(
             type: PageTransitionType.rightToLeftWithFade,
@@ -93,6 +95,7 @@ class _UserViewState extends State<UserView> {
   Widget build(BuildContext context) {
     if (user != null) {
       return Scaffold(
+        key: _scaffoldKey,
         appBar: LoggedInAppBar(page: 'UserView'),
         body: SingleChildScrollView(
           child: Container(
@@ -416,7 +419,7 @@ class _UserViewState extends State<UserView> {
                               builder: (BuildContext context) {
                                 return AlertDialog(
                                   title: const Text('Message'),
-                                  content: const Text('User is updated!'),
+                                  content: const Text('User updated!'),
                                   actions: [
                                     TextButton(
                                       child: const Text('OK'),
@@ -470,52 +473,193 @@ class _UserViewState extends State<UserView> {
                           height: 10,
                         ),
                         Column(
-                          children: user!.vehicles!.map(
-                            (_vehicle) {
-                              var vehicle = VehicleModel.fromJson(_vehicle);
-                              return Card(
-                                child: GestureDetector(
-                                  child: ListTile(
-                                    contentPadding:
-                                        EdgeInsets.only(right: 20, left: 20),
-                                    trailing: Icon(
-                                      Icons.drive_eta,
-                                      size: 14,
-                                      color: vehicle.is_in == true
-                                          ? Colors.green
-                                          : Colors.red,
-                                    ),
-                                    title: RichText(
-                                      text: TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: '${vehicle.model} - ',
-                                            style: TextStyle(
-                                                color: Colors.grey[900]),
-                                          ),
-                                          TextSpan(
-                                            text:
-                                                vehicle.plate_no.toUpperCase(),
-                                            style: TextStyle(
-                                              color: Colors.grey[900],
-                                              fontWeight: FontWeight.bold,
+                            children: user!.vehicles!.isNotEmpty
+                                ? user!.vehicles!.map(
+                                    (_vehicle) {
+                                      Offset _tapDownPosition =
+                                          const Offset(0, 0);
+                                      var vehicle =
+                                          VehicleModel.fromJson(_vehicle);
+                                      return Card(
+                                        child: GestureDetector(
+                                          child: ListTile(
+                                            contentPadding:
+                                                const EdgeInsets.only(
+                                                    right: 20, left: 20),
+                                            trailing: Icon(
+                                              Icons.drive_eta,
+                                              size: 14,
+                                              color: vehicle.is_in == true
+                                                  ? Colors.green
+                                                  : Colors.red,
+                                            ),
+                                            title: RichText(
+                                              text: TextSpan(
+                                                children: [
+                                                  TextSpan(
+                                                    text: '${vehicle.model} - ',
+                                                    style: TextStyle(
+                                                        color:
+                                                            Colors.grey[900]),
+                                                  ),
+                                                  TextSpan(
+                                                    text: vehicle.plate_no
+                                                        .toUpperCase(),
+                                                    style: TextStyle(
+                                                      color: Colors.grey[900],
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  onTap: () async {
-                                    await viewVehicle(vehicle);
-                                  },
-                                  onLongPress: () {
-                                    print('long pressed');
-                                  },
-                                ),
-                              );
-                            },
-                          ).toList(),
-                        ),
+                                          onTap: () async {
+                                            await viewVehicle(vehicle);
+                                          },
+                                          onTapDown: (TapDownDetails details) {
+                                            _tapDownPosition =
+                                                details.globalPosition;
+                                          },
+                                          onLongPress: () async {
+                                            List<PopupMenuItem> popUpMenuItem =
+                                                const [
+                                              PopupMenuItem(
+                                                value: 1,
+                                                child: Text('View'),
+                                              ),
+                                              PopupMenuItem(
+                                                value: 2,
+                                                child: Text('Delete'),
+                                              ),
+                                            ];
+                                            await showMenu(
+                                              context: context,
+                                              position: RelativeRect.fromLTRB(
+                                                _tapDownPosition.dx,
+                                                _tapDownPosition.dy,
+                                                MediaQuery.of(context)
+                                                        .size
+                                                        .width -
+                                                    _tapDownPosition.dx,
+                                                MediaQuery.of(context)
+                                                        .size
+                                                        .height -
+                                                    _tapDownPosition.dy,
+                                              ),
+                                              items: popUpMenuItem,
+                                              elevation: 8.0,
+                                            ).then((value) async {
+                                              switch (value) {
+                                                case 1:
+                                                  await viewVehicle(vehicle);
+                                                  break;
+                                                case 2:
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (builder) {
+                                                        return AlertDialog(
+                                                          title: const Text(
+                                                              'Notice'),
+                                                          content: Text(
+                                                              'Are you sure you want to delete ${vehicle.model} - ${vehicle.plate_no.toString().toUpperCase()}?'),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context,
+                                                                    'Cancel');
+                                                              },
+                                                              child: const Text(
+                                                                'Cancel',
+                                                              ),
+                                                            ),
+                                                            TextButton(
+                                                              onPressed:
+                                                                  () async {
+                                                                var vehicleDeleteResponse =
+                                                                    await VehicleService
+                                                                        .delete(
+                                                                            vehicle.id);
+                                                                if (vehicleDeleteResponse[
+                                                                        'statusCode'] ==
+                                                                    200) {
+                                                                  refreshUser(user!
+                                                                      .id
+                                                                      .toString());
+                                                                  Navigator.pop(
+                                                                      context,
+                                                                      'YES');
+                                                                  showDialog(
+                                                                    context:
+                                                                        context,
+                                                                    builder:
+                                                                        (dialogContext) {
+                                                                      return AlertDialog(
+                                                                        title: const Text(
+                                                                            'Notice'),
+                                                                        content:
+                                                                            Text('Vehicle deleted!'),
+                                                                        actions: [
+                                                                          TextButton(
+                                                                            onPressed:
+                                                                                () {
+                                                                              Navigator.pop(dialogContext, 'OK');
+                                                                            },
+                                                                            child:
+                                                                                const Text('OK'),
+                                                                          ),
+                                                                        ],
+                                                                      );
+                                                                    },
+                                                                  );
+                                                                } else {
+                                                                  showDialog(
+                                                                    context:
+                                                                        context,
+                                                                    builder:
+                                                                        (dialogContext) {
+                                                                      return AlertDialog(
+                                                                        title: const Text(
+                                                                            'Notice'),
+                                                                        content:
+                                                                            Text('Failed to delete vehicle!'),
+                                                                        actions: [
+                                                                          TextButton(
+                                                                            onPressed:
+                                                                                () {
+                                                                              Navigator.pop(dialogContext, 'OK');
+                                                                            },
+                                                                            child:
+                                                                                const Text('OK'),
+                                                                          ),
+                                                                        ],
+                                                                      );
+                                                                    },
+                                                                  );
+                                                                }
+                                                              },
+                                                              child: const Text(
+                                                                'YES',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .red),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      });
+                                                  break;
+                                                default:
+                                              }
+                                            });
+                                          },
+                                        ),
+                                      );
+                                    },
+                                  ).toList()
+                                : [const Text('No vehicles yet.')]),
                         const SizedBox(
                           height: 10,
                         ),
@@ -547,8 +691,34 @@ class _UserViewState extends State<UserView> {
                               txtPlateNo.text,
                             );
 
-                            if (response.statusCode == 200) {
+                            if (response['statusCode'] == 200) {
                               refreshUser(user!.id);
+                            } else if (response['statusCode'] == 401) {
+                              Navigator.of(context).pushAndRemoveUntil(
+                                  PageTransition(
+                                    type:
+                                        PageTransitionType.rightToLeftWithFade,
+                                    child: const Login(),
+                                  ),
+                                  (route) => false);
+                            } else {
+                              showDialog(
+                                  context: context,
+                                  builder: (builder) {
+                                    return AlertDialog(
+                                      title: const Text('Notice'),
+                                      content: const Text(
+                                          'Failed to add a vehicle!'),
+                                      actions: [
+                                        TextButton(
+                                          child: const Text('OK'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop('OK');
+                                          },
+                                        )
+                                      ],
+                                    );
+                                  });
                             }
                           },
                           child: const Text('Add Vehicle'),
@@ -566,30 +736,9 @@ class _UserViewState extends State<UserView> {
       );
     } else {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('VPass | Driver Details'),
-          actions: [
-            PopupMenuButton<String>(
-              onSelected: (String value) {
-                switch (value) {
-                  case 'Logout':
-                    // logout();
-                    break;
-                  case 'Settings':
-                    break;
-                }
-              },
-              itemBuilder: (BuildContext context) {
-                return {'Logout', 'Settings'}.map((String choice) {
-                  return PopupMenuItem<String>(
-                    value: choice,
-                    child: Text(choice),
-                  );
-                }).toList();
-              },
-            ),
-          ],
-        ),
+        key: _scaffoldKey,
+        appBar: LoggedInAppBar(page: 'UserView'),
+        body: const Center(child: Text('Waiting...')),
       );
     }
   }

@@ -22,8 +22,9 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final txtUsername = TextEditingController(text: 'admin01');
-  final txtPassword = TextEditingController(text: '1234');
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final txtUsername = TextEditingController();
+  final txtPassword = TextEditingController();
 
   @override
   void dispose() {
@@ -107,6 +108,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('VPass | Login'),
       ),

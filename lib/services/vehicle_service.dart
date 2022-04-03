@@ -66,7 +66,15 @@ class VehicleService {
         'plate_no': plateNo,
       }),
     );
-    return response;
+
+    if (response.statusCode == 200) {
+      return {
+        'statusCode': 200,
+        'data': VehicleModel.fromJson(jsonDecode(response.body))
+      };
+    } else {
+      return {'statusCode': response.statusCode};
+    }
   }
 
   static delete(String? id) async {
@@ -81,9 +89,14 @@ class VehicleService {
             'Bearer ' + SharedPreferencesService.getString('session_token')
       },
     );
+
     if (response.statusCode == 200) {
-      return true;
+      return {
+        'statusCode': 200,
+        'data': VehicleModel.fromJson(jsonDecode(response.body))
+      };
+    } else {
+      return {'statusCode': response.statusCode};
     }
-    return false;
   }
 }

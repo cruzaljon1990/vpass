@@ -23,6 +23,7 @@ class QRCodeScanner extends StatefulWidget {
 }
 
 class _QRCodeScannerState extends State<QRCodeScanner> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? controller;
   @override
@@ -38,6 +39,7 @@ class _QRCodeScannerState extends State<QRCodeScanner> {
   @override
   Widget build(BuildContext context) => SafeArea(
         child: Scaffold(
+          key: _scaffoldKey,
           appBar: LoggedInAppBar(page: 'QRCodeScanner'),
           body: Stack(
             alignment: Alignment.center,
@@ -52,7 +54,7 @@ class _QRCodeScannerState extends State<QRCodeScanner> {
                   ),
                 ),
                 bottom: 20,
-              )
+              ),
             ],
           ),
         ),
@@ -63,7 +65,7 @@ class _QRCodeScannerState extends State<QRCodeScanner> {
       PageTransition(
         type: PageTransitionType.rightToLeftWithFade,
         child: VehicleView(
-          vehicle: vehicle,
+          id: vehicle.id.toString(),
         ),
       ),
     );

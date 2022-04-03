@@ -5,7 +5,9 @@ class Inactive extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(title: Text('VPass | Inactive Account')),
       body: const Padding(
         padding: EdgeInsets.all(30),

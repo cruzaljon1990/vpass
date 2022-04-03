@@ -106,6 +106,10 @@ class _LoggedInAppBarState extends State<LoggedInAppBar> {
       return AppBar(title: const Text('Vehicle Information'));
     } else if (widget.page == 'Log') {
       return AppBar(title: const Text('Logs'));
+    } else if (widget.page == 'LogView') {
+      return AppBar(title: const Text('Log Information'));
+    } else if (widget.page == 'AddLogView') {
+      return AppBar(title: const Text('Add Visitor Log'));
     } else {
       return AppBar(title: const Text('VPass'));
     }

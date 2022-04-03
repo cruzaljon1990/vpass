@@ -33,6 +33,7 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   UserModel? user;
   final qrKey = GlobalKey();
   TextEditingController txtFirstname = TextEditingController();
@@ -57,7 +58,7 @@ class _ProfileViewState extends State<ProfileView> {
       PageTransition(
         type: PageTransitionType.rightToLeftWithFade,
         child: VehicleView(
-          vehicle: vehicle,
+          id: vehicle.id.toString(),
         ),
       ),
     );
@@ -97,6 +98,7 @@ class _ProfileViewState extends State<ProfileView> {
   Widget build(BuildContext context) {
     if (user != null) {
       return Scaffold(
+        key: _scaffoldKey,
         appBar: LoggedInAppBar(
           page: 'ProfileView',
         ),
@@ -268,7 +270,7 @@ class _ProfileViewState extends State<ProfileView> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             title: const Text('Message'),
-                            content: const Text('User is updated!'),
+                            content: const Text('User updated!'),
                             actions: [
                               TextButton(
                                 child: const Text('OK'),
@@ -418,6 +420,7 @@ class _ProfileViewState extends State<ProfileView> {
       );
     } else {
       return Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: const Text('VPass | Driver Details'),
           actions: [

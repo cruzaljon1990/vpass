@@ -18,18 +18,28 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     List<Widget> gridViewItems = [
       Center(
         child: SizedBox(
-          width: 150,
-          height: 150,
+          width: 120,
+          height: 120,
           child: ElevatedButton(
             child: Icon(
               Icons.qr_code,
               size: 50,
             ),
+            onLongPress: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  duration: Duration(seconds: 1),
+                  content: Text('QR Code Scanner'),
+                ),
+              );
+            },
             onPressed: () {
               Navigator.push(
                 context,
@@ -44,19 +54,58 @@ class _HomeState extends State<Home> {
       ),
       Center(
         child: SizedBox(
-          width: 150,
-          height: 150,
+          width: 120,
+          height: 120,
           child: ElevatedButton(
             child: Icon(
-              Icons.drive_eta,
+              Icons.format_list_bulleted,
               size: 50,
             ),
+            onLongPress: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  duration: Duration(seconds: 1),
+                  content: Text('Logs'),
+                ),
+              );
+            },
             onPressed: () {
               Navigator.push(
                 context,
                 PageTransition(
                   type: PageTransitionType.rightToLeftWithFade,
-                  child: UserPage(
+                  child: Log(),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+      Center(
+        child: SizedBox(
+          width: 120,
+          height: 120,
+          child: ElevatedButton(
+            child: Icon(
+              Icons.drive_eta,
+              size: 50,
+            ),
+            onLongPress: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  duration: Duration(seconds: 1),
+                  content: Text('Drivers'),
+                ),
+              );
+            },
+            onPressed: () {
+              Navigator.push(
+                context,
+                PageTransition(
+                  type: PageTransitionType.rightToLeftWithFade,
+                  child: User(
                     type: 'driver',
                   ),
                 ),
@@ -70,44 +119,30 @@ class _HomeState extends State<Home> {
       gridViewItems.add(
         Center(
           child: SizedBox(
-            width: 150,
-            height: 150,
+            width: 120,
+            height: 120,
             child: ElevatedButton(
               child: Icon(
                 Icons.security,
                 size: 50,
               ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  PageTransition(
-                    type: PageTransitionType.rightToLeftWithFade,
-                    child: UserPage(
-                      type: 'guard',
-                    ),
+              onLongPress: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    duration: Duration(seconds: 1),
+                    content: Text('Guards'),
                   ),
                 );
               },
-            ),
-          ),
-        ),
-      );
-      gridViewItems.add(
-        Center(
-          child: SizedBox(
-            width: 150,
-            height: 150,
-            child: ElevatedButton(
-              child: Icon(
-                Icons.format_list_bulleted,
-                size: 50,
-              ),
               onPressed: () {
                 Navigator.push(
                   context,
                   PageTransition(
                     type: PageTransitionType.rightToLeftWithFade,
-                    child: Log(),
+                    child: User(
+                      type: 'guard',
+                    ),
                   ),
                 );
               },
@@ -118,12 +153,14 @@ class _HomeState extends State<Home> {
     }
 
     return Scaffold(
-        appBar: LoggedInAppBar(
-          page: 'Home',
-        ),
-        body: GridView.count(
-          crossAxisCount: 2,
-          children: gridViewItems,
-        ));
+      key: _scaffoldKey,
+      appBar: LoggedInAppBar(
+        page: 'Home',
+      ),
+      body: GridView.count(
+        crossAxisCount: 2,
+        children: gridViewItems,
+      ),
+    );
   }
 }

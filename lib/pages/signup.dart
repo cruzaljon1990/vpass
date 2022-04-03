@@ -20,11 +20,12 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  TextEditingController txtUsername = TextEditingController(text: 'driver0');
-  TextEditingController txtPassword = TextEditingController(text: '1234');
-  TextEditingController txtFirstname = TextEditingController(text: 'John');
-  TextEditingController txtMiddlename = TextEditingController(text: 'Doe');
-  TextEditingController txtLastname = TextEditingController(text: 'Doe');
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  TextEditingController txtUsername = TextEditingController();
+  TextEditingController txtPassword = TextEditingController();
+  TextEditingController txtFirstname = TextEditingController();
+  TextEditingController txtMiddlename = TextEditingController();
+  TextEditingController txtLastname = TextEditingController();
   String? txtType = 'driver';
   DateTime? txtBirthday;
   late SharedPreferences sharedPreferences;
@@ -110,6 +111,7 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: LoggedInAppBar(page: 'SignUp'),
       body: SingleChildScrollView(
         child: Padding(

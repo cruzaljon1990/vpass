@@ -6,25 +6,48 @@ import 'package:vpass/models/LogModel.dart';
 import 'package:vpass/services/shared_preferences_service.dart';
 
 class LogService {
-  static toggleStatus(String? id, [String? log_id]) async {
-    if (id != null) {
-      final response = await http.post(
-          Uri.parse(dotenv.get('API_URL') + 'log/toggle-status/' + id),
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization':
-                'Bearer ' + SharedPreferencesService.getString('session_token')
-          },
-          body: jsonEncode({'log_id': log_id ?? ''}));
-      if (response.statusCode == 200) {
-        return true;
-      }
+  static toggleStatus(String id) async {
+    final response = await http.post(
+      Uri.parse(dotenv.get('API_URL') + 'log/toggle-status/' + id),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization':
+            'Bearer ' + SharedPreferencesService.getString('session_token')
+      },
+    );
+    if (response.statusCode == 200) {
+      return {
+        'statusCode': response.statusCode,
+        'data': LogModel.fromJson(jsonDecode(response.body))
+      };
+    } else {
+      return {'statusCode': response.statusCode};
     }
-    return false;
   }
 
-  static Future<LogModel?> getLog(String id, {int isVisitor = 0}) async {
+  static update(String id, Object? logData) async {
+    final response = await http.post(
+      Uri.parse(dotenv.get('API_URL') + 'log/' + id),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization':
+            'Bearer ' + SharedPreferencesService.getString('session_token')
+      },
+      body: jsonEncode(logData),
+    );
+    if (response.statusCode == 200) {
+      return {
+        'statusCode': response.statusCode,
+        'data': LogModel.fromJson(jsonDecode(response.body))
+      };
+    } else {
+      return {'statusCode': response.statusCode};
+    }
+  }
+
+  static getLog(String id, {int isVisitor = 0}) async {
     final response = await http.get(
       Uri.parse(dotenv.get('API_URL') +
           'log/' +
@@ -39,13 +62,16 @@ class LogService {
     );
 
     if (response.statusCode == 200) {
-      return LogModel.fromJson(jsonDecode(response.body));
+      return {
+        'statusCode': response.statusCode,
+        'data': LogModel.fromJson(jsonDecode(response.body))
+      };
     } else {
-      return null;
+      return {'statusCode': response.statusCode};
     }
   }
 
-  static Future<List<LogModel>?> getLogs({
+  static getLogs({
     int page = 1,
     int? isVisitor,
   }) async {
@@ -61,18 +87,18 @@ class LogService {
             'Bearer ' + SharedPreferencesService.getString('session_token')
       },
     );
+
     if (response.statusCode == 200) {
-      return await LogModel.parseData(jsonDecode(response.body)['data']);
+      return {
+        'statusCode': response.statusCode,
+        'data': LogModel.parseData(jsonDecode(response.body)['data'])
+      };
     } else {
-      return [];
+      return {'statusCode': response.statusCode};
     }
   }
 
-  static create(
-    String userId,
-    String model,
-    String plateNo,
-  ) async {
+  static create(Object? logData) async {
     final response = await http.post(
       Uri.parse(dotenv.get('API_URL') + 'log'),
       headers: {
@@ -81,13 +107,17 @@ class LogService {
         'Authorization':
             'Bearer ' + SharedPreferencesService.getString('session_token')
       },
-      body: jsonEncode({
-        'user_id': userId,
-        'model': model,
-        'plate_no': plateNo,
-      }),
+      body: jsonEncode(logData),
     );
-    return response;
+
+    if (response.statusCode == 200) {
+      return {
+        'statusCode': response.statusCode,
+        'data': LogModel.fromJson(jsonDecode(response.body))
+      };
+    } else {
+      return {'statusCode': response.statusCode};
+    }
   }
 
   static delete(String? id) async {
@@ -102,9 +132,14 @@ class LogService {
             'Bearer ' + SharedPreferencesService.getString('session_token')
       },
     );
+
     if (response.statusCode == 200) {
-      return true;
+      return {
+        'statusCode': response.statusCode,
+        'data': LogModel.fromJson(jsonDecode(response.body))
+      };
+    } else {
+      return {'statusCode': response.statusCode};
     }
-    return false;
   }
 }

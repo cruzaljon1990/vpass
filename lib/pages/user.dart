@@ -16,21 +16,32 @@ import 'package:vpass/pages/user_view.dart';
 import 'package:vpass/services/shared_preferences_service.dart';
 import 'package:vpass/services/user_service.dart';
 
-class UserPage extends StatefulWidget {
+class User extends StatefulWidget {
   String? type = 'driver';
-  UserPage({Key? key, this.type}) : super(key: key);
+  User({Key? key, this.type}) : super(key: key);
 
   @override
-  State<UserPage> createState() => _UserPageState();
+  State<User> createState() => _UserState();
 }
 
-class _UserPageState extends State<UserPage> {
+class _UserState extends State<User> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   var users;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+  }
+
+  viewUser(id) async {
+    Navigator.push(
+      context,
+      PageTransition(
+        type: PageTransitionType.rightToLeftWithFade,
+        child: UserView(id: id),
+      ),
+    );
   }
 
   @override
@@ -45,10 +56,6 @@ class _UserPageState extends State<UserPage> {
     if (SharedPreferencesService.getString('session_user_type') == 'admin') {
       popUpMenuItem.add(PopupMenuItem(
         value: 2,
-        child: Text('Edit'),
-      ));
-      popUpMenuItem.add(PopupMenuItem(
-        value: 3,
         child: Text('Delete'),
       ));
     }
@@ -57,6 +64,7 @@ class _UserPageState extends State<UserPage> {
         setState(() {});
       },
       child: Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: Text(
             widget.type == 'driver'
@@ -69,8 +77,7 @@ class _UserPageState extends State<UserPage> {
             future: UserService.getUsers(widget.type),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
-                var statusCode = snapshot.data['statusCode'];
-                if (statusCode == 200) {
+                if (snapshot.data['statusCode'] == 200) {
                   var users = snapshot.data['data'];
                   return ListView.builder(
                     padding: EdgeInsets.all(20),
@@ -89,7 +96,7 @@ class _UserPageState extends State<UserPage> {
                               case 1:
                                 await viewUser(users[index].id);
                                 break;
-                              case 3:
+                              case 2:
                                 showDialog(
                                     context: context,
                                     builder: (builder) {
@@ -107,11 +114,59 @@ class _UserPageState extends State<UserPage> {
                                             ),
                                           ),
                                           TextButton(
-                                            onPressed: () {
-                                              UserService.delete(
-                                                  users[index].id);
-                                              setState(() {});
-                                              Navigator.pop(context, 'YES');
+                                            onPressed: () async {
+                                              var userDeleteResponse =
+                                                  await UserService.delete(
+                                                      users[index].id);
+                                              if (userDeleteResponse[
+                                                      'statusCode'] ==
+                                                  200) {
+                                                setState(() {});
+                                                Navigator.pop(context, 'YES');
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (dialogContext) {
+                                                    return AlertDialog(
+                                                      title: Text('Notice'),
+                                                      content:
+                                                          Text('User deleted!'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    dialogContext)
+                                                                .pop('OK');
+                                                          },
+                                                          child:
+                                                              const Text('OK'),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              } else {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (dialogContext) {
+                                                    return AlertDialog(
+                                                      title: Text('Notice'),
+                                                      content: Text(
+                                                          'Failed to delete user!'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    dialogContext)
+                                                                .pop('OK');
+                                                          },
+                                                          child:
+                                                              const Text('OK'),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              }
                                             },
                                             child: Text(
                                               'YES',
@@ -177,7 +232,7 @@ class _UserPageState extends State<UserPage> {
                       );
                     },
                   );
-                } else if (statusCode == 401) {
+                } else if (snapshot.data['statusCode'] == 401) {
                   SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
                     Navigator.of(context).pushAndRemoveUntil(
                         PageTransition(
@@ -198,7 +253,7 @@ class _UserPageState extends State<UserPage> {
                 }
                 return Text('waiting...');
               } else {
-                return Text('waiting...');
+                return Text('No');
               }
 
               // if (snapshot.connectionState != ConnectionState.done) {
@@ -211,16 +266,6 @@ class _UserPageState extends State<UserPage> {
             },
           ),
         ),
-      ),
-    );
-  }
-
-  viewUser(id) async {
-    Navigator.push(
-      context,
-      PageTransition(
-        type: PageTransitionType.rightToLeftWithFade,
-        child: UserView(id: id),
       ),
     );
   }
