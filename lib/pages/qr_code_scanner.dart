@@ -123,6 +123,27 @@ class _QRCodeScannerState extends State<QRCodeScanner> {
                                   vehicle.id.toString());
                           if (toggleVehicleResponse['statusCode'] == 200) {
                             viewVehicle(toggleVehicleResponse['data']);
+                          } else if (toggleVehicleResponse['statusCode'] ==
+                              501) {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Notice'),
+                                  content: const Text(
+                                    'Log creation failed! Parking slots are full!',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context, 'OK');
+                                          controller.resumeCamera();
+                                        },
+                                        child: const Text('OK'))
+                                  ],
+                                );
+                              },
+                            );
                           } else {
                             showDialog(
                               context: context,

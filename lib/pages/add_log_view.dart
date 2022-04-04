@@ -24,6 +24,7 @@ class _LogViewState extends State<AddLogView> {
   TextEditingController txtLastname = TextEditingController();
   TextEditingController txtModel = TextEditingController();
   TextEditingController txtPlateNo = TextEditingController();
+  bool? is_parking = false;
 
   @override
   void initState() {
@@ -145,6 +146,27 @@ class _LogViewState extends State<AddLogView> {
                       TextField(controller: txtPlateNo),
                     ],
                   ),
+                  TableRow(
+                    children: [
+                      const SizedBox.shrink(),
+                      Container(
+                        child: Row(
+                          children: [
+                            Checkbox(
+                              value: is_parking,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  is_parking = value;
+                                });
+                              },
+                            ),
+                            const Text('For Parking?'),
+                          ],
+                        ),
+                        alignment: Alignment.centerRight,
+                      ),
+                    ],
+                  ),
                 ],
               ),
               const SizedBox(height: 10),
@@ -156,6 +178,7 @@ class _LogViewState extends State<AddLogView> {
                     'lastname': txtLastname.text,
                     'plate_no': txtPlateNo.text,
                     'model': txtModel.text,
+                    'is_parking': is_parking,
                   };
                   var logUpdateResponse = await LogService.create(logData);
                   if (logUpdateResponse['statusCode'] == 200) {
@@ -194,7 +217,29 @@ class _LogViewState extends State<AddLogView> {
                         ),
                         (route) => false);
                   } else {
-                    Navigator.of(context).pop();
+                    if (logUpdateResponse['statusCode'] == 501) {
+                      showDialog(
+                        context: context,
+                        builder: (dialogContext) {
+                          return AlertDialog(
+                            title: const Text('Message'),
+                            content: const Text(
+                              'Log creation failed! Parking slots are full!',
+                            ),
+                            actions: [
+                              TextButton(
+                                child: const Text('OK'),
+                                onPressed: () {
+                                  Navigator.of(context).pop('OK');
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else {
+                      Navigator.of(context).pop();
+                    }
                   }
                 },
                 child: const Text('Add Log'),

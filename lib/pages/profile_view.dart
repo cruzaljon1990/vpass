@@ -361,7 +361,6 @@ class _ProfileViewState extends State<ProfileView> {
                                     await viewVehicle(vehicle);
                                   },
                                   onLongPress: () async {
-                                    print('long pressed');
                                     await VehicleService.delete(vehicle.id);
                                     refreshUser();
                                   },
@@ -401,7 +400,7 @@ class _ProfileViewState extends State<ProfileView> {
                               txtPlateNo.text,
                             );
 
-                            if (response.statusCode == 200) {
+                            if (response['statusCode'] == 200) {
                               refreshUser();
                             }
                           },

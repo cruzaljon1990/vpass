@@ -47,13 +47,9 @@ class LogService {
     }
   }
 
-  static getLog(String id, {int isVisitor = 0}) async {
+  static getLog(String id) async {
     final response = await http.get(
-      Uri.parse(dotenv.get('API_URL') +
-          'log/' +
-          id +
-          '?is_visitor=' +
-          isVisitor.toString()),
+      Uri.parse(dotenv.get('API_URL') + 'log/' + id),
       headers: {
         'Content-Type': 'application/json',
         'Authorization':
@@ -74,10 +70,14 @@ class LogService {
   static getLogs({
     int page = 1,
     int? isVisitor,
+    String? name,
   }) async {
     String url = dotenv.get('API_URL') + 'log?page=' + page.toString();
     if (isVisitor != null) {
       url += '&is_visitor=' + isVisitor.toString();
+    }
+    if (name != null) {
+      url += '&name=' + name.toString();
     }
     final response = await http.get(
       Uri.parse(url),

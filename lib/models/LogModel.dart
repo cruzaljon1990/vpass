@@ -8,6 +8,8 @@ class LogModel {
   late bool? is_visitor;
   late DateTime? time_in;
   late bool? is_in;
+  late bool? is_vip;
+  late bool? is_parking;
   DateTime? time_out;
 
   LogModel({
@@ -20,6 +22,8 @@ class LogModel {
     required this.is_visitor,
     required this.time_in,
     required this.is_in,
+    required this.is_vip,
+    required this.is_parking,
   });
 
   factory LogModel.fromJson(Map<String, dynamic> json) {
@@ -33,6 +37,8 @@ class LogModel {
       is_visitor: json['is_visitor'],
       time_in: DateTime.parse(json['time_in'] ?? ''),
       is_in: json['is_in'],
+      is_vip: json['is_vip'],
+      is_parking: json['is_parking'],
     );
 
     if (json['time_out'] != null) {

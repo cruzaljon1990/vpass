@@ -43,7 +43,6 @@ class _LogViewState extends State<LogView> {
         log = response['data'];
       });
       if (log != null) {
-        print(log);
         txtFirstname.text = log!.firstname!;
         txtMiddlename.text = log!.middlename!;
         txtLastname.text = log!.lastname!;
@@ -152,7 +151,7 @@ class _LogViewState extends State<LogView> {
 
       return Scaffold(
         key: _scaffoldKey,
-        appBar: LoggedInAppBar(page: 'AddLogView'),
+        appBar: LoggedInAppBar(page: 'LogView'),
         body: SingleChildScrollView(
           child: Container(
             padding: const EdgeInsets.all(10),
@@ -269,8 +268,9 @@ class _LogViewState extends State<LogView> {
                           ),
                         ),
                         TextField(
-                            controller: txtFirstname,
-                            enabled: log!.time_out == null),
+                          controller: txtFirstname,
+                          enabled: log!.time_out == null,
+                        ),
                       ],
                     ),
                     TableRow(
@@ -352,6 +352,31 @@ class _LogViewState extends State<LogView> {
                         TextField(
                           controller: txtPlateNo,
                           enabled: log!.time_out == null,
+                        ),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(
+                            top: 13,
+                            right: 10,
+                          ),
+                          child: Text(
+                            'Log Purpose:',
+                            textAlign: TextAlign.end,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        TextField(
+                          controller: TextEditingController(
+                            text: log!.is_parking == true
+                                ? 'For Parking'
+                                : 'For Drop Off',
+                          ),
+                          enabled: false,
                         ),
                       ],
                     ),

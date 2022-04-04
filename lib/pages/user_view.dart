@@ -422,10 +422,13 @@ class _UserViewState extends State<UserView> {
                                   content: const Text('User updated!'),
                                   actions: [
                                     TextButton(
-                                      child: const Text('OK'),
-                                      onPressed: () =>
-                                          Navigator.pop(context, 'OK'),
-                                    ),
+                                        child: const Text('OK'),
+                                        onPressed: () {
+                                          Navigator.pop(context, 'OK');
+                                          if (user != null) {
+                                            refreshUser(user!.id);
+                                          }
+                                        }),
                                   ],
                                 );
                               },

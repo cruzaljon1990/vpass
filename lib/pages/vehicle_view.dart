@@ -205,6 +205,12 @@ class _VehicleViewState extends State<VehicleView> {
                           return Card(
                             child: GestureDetector(
                               child: ListTile(
+                                leading: log.is_vip == true
+                                    ? const Icon(
+                                        Icons.star,
+                                        color: CustomColors.orange,
+                                      )
+                                    : const Icon(Icons.person),
                                 contentPadding: const EdgeInsets.only(
                                     left: 15, right: 15, top: 5, bottom: 5),
                                 trailing: Icon(
@@ -377,6 +383,95 @@ class _VehicleViewState extends State<VehicleView> {
               const SizedBox(
                 height: 10,
               ),
+              (() {
+                if (vehicle!.is_in == false &&
+                    SharedPreferencesService.getString('session_user_type') !=
+                        'driver') {
+                  return ElevatedButton(
+                      onPressed: () async {
+                        if (vehicle != null) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Confirm Vehicle'),
+                                content: Text(
+                                  'Vehicle: ${vehicle!.model} [${vehicle!.plate_no.toUpperCase()}]',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, 'Cancel');
+                                    },
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      Navigator.pop(context, 'OK');
+                                      var toggleVehicleResponse =
+                                          await VehicleService.toggleStatus(
+                                              vehicle!.id.toString());
+                                      if (toggleVehicleResponse['statusCode'] ==
+                                          200) {
+                                        refreshVehicle(vehicle!.id);
+                                      } else if (toggleVehicleResponse[
+                                              'statusCode'] ==
+                                          501) {
+                                        showDialog(
+                                          context: context,
+                                          builder:
+                                              (BuildContext dialogContext) {
+                                            return AlertDialog(
+                                              title: const Text('Notice'),
+                                              content: const Text(
+                                                'Log creation failed! Parking slots are full!',
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(
+                                                          dialogContext, 'OK');
+                                                    },
+                                                    child: const Text('OK'))
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      } else {
+                                        showDialog(
+                                          context: context,
+                                          builder:
+                                              (BuildContext dialogContext) {
+                                            return AlertDialog(
+                                              title: const Text('Notice'),
+                                              content:
+                                                  const Text('Invalid QR!'),
+                                              actions: [
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(
+                                                          dialogContext, 'OK');
+                                                    },
+                                                    child: const Text('OK'))
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      }
+                                    },
+                                    child: const Text('Confirm'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      },
+                      child: const Text('Add Log'));
+                } else {
+                  return const SizedBox.shrink();
+                }
+              })()
             ]),
           ),
         ),

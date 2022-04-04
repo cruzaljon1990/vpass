@@ -1,11 +1,8 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:vpass/models/UserModel.dart';
-import 'package:vpass/pages/login.dart';
 import 'package:vpass/services/shared_preferences_service.dart';
 
 class UserService {
@@ -75,14 +72,25 @@ class UserService {
         'data': UserModel.fromJson(jsonDecode(response.body))
       };
     } else {
-      print(response.body);
       return {'statusCode': response.statusCode};
     }
   }
 
-  static getUsers(String? type) async {
+  static getUsers({
+    int? page = 1,
+    String? type = 'driver',
+    String? name,
+  }) async {
+    String url = dotenv.get('API_URL') + 'user?page=' + page.toString();
+    if (type != null) {
+      url += '&type=' + type;
+    }
+    if (name != null) {
+      url += '&name=' + name.toString();
+    }
+
     final response = await http.get(
-      Uri.parse(dotenv.get('API_URL') + 'user?type=' + (type ?? 'driver')),
+      Uri.parse(url),
       headers: {
         'Content-Type': 'application/json',
         'Authorization':

@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vpass/logged_in_appbar.dart';
+import 'package:vpass/pages/settings.dart';
 import 'package:vpass/pages/user.dart';
 import 'package:vpass/pages/qr_code_scanner.dart';
 import 'package:vpass/pages/log.dart';
@@ -143,6 +144,38 @@ class _HomeState extends State<Home> {
                     child: User(
                       type: 'guard',
                     ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+      gridViewItems.add(
+        Center(
+          child: SizedBox(
+            width: 120,
+            height: 120,
+            child: ElevatedButton(
+              child: Icon(
+                Icons.settings,
+                size: 50,
+              ),
+              onLongPress: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    duration: Duration(seconds: 1),
+                    content: Text('Settings'),
+                  ),
+                );
+              },
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  PageTransition(
+                    type: PageTransitionType.rightToLeftWithFade,
+                    child: Settings(),
                   ),
                 );
               },

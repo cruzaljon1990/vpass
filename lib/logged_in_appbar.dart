@@ -12,7 +12,8 @@ import 'package:vpass/services/user_service.dart';
 
 class LoggedInAppBar extends StatefulWidget implements PreferredSizeWidget {
   String? page;
-  LoggedInAppBar({Key? key, this.page})
+  var callback;
+  LoggedInAppBar({Key? key, this.page, this.callback})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -105,7 +106,12 @@ class _LoggedInAppBarState extends State<LoggedInAppBar> {
     } else if (widget.page == 'VehicleView') {
       return AppBar(title: const Text('Vehicle Information'));
     } else if (widget.page == 'Log') {
-      return AppBar(title: const Text('Logs'));
+      return AppBar(
+        title: const Text('Logs'),
+        actions: [
+          IconButton(onPressed: widget.callback, icon: const Icon(Icons.search))
+        ],
+      );
     } else if (widget.page == 'LogView') {
       return AppBar(title: const Text('Log Information'));
     } else if (widget.page == 'AddLogView') {
