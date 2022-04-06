@@ -39,6 +39,7 @@ class _LoginState extends State<Login> {
       case 200:
         var status = jsonDecode(response.body)['status'];
         var user_id = jsonDecode(response.body)['user_id'];
+        bool is_super = jsonDecode(response.body)['user_is_super'];
         if (status != 1) {
           Navigator.push(
             context,
@@ -54,6 +55,8 @@ class _LoginState extends State<Login> {
         SharedPreferencesService.setString('session_token', token);
         SharedPreferencesService.setString('session_user_type', user_type);
         SharedPreferencesService.setInteger('session_user_status', status);
+        SharedPreferencesService.setString('session_user_id', user_id);
+        SharedPreferencesService.setBool('session_user_is_super', is_super);
         switch (user_type) {
           case 'admin':
           case 'guard':

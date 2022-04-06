@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomColors {
   CustomColors._(); // this basically makes it so you can instantiate this class
-  static const primaryOrange = 0xFFf7931e;
+  static const primaryOrange = 0xFFf7871e;
   static const MaterialColor orange = MaterialColor(
     primaryOrange,
     <int, Color>{

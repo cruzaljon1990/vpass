@@ -87,7 +87,6 @@ class LogService {
             'Bearer ' + SharedPreferencesService.getString('session_token')
       },
     );
-
     if (response.statusCode == 200) {
       return {
         'statusCode': response.statusCode,
@@ -132,14 +131,6 @@ class LogService {
             'Bearer ' + SharedPreferencesService.getString('session_token')
       },
     );
-
-    if (response.statusCode == 200) {
-      return {
-        'statusCode': response.statusCode,
-        'data': LogModel.fromJson(jsonDecode(response.body))
-      };
-    } else {
-      return {'statusCode': response.statusCode};
-    }
+    return {'statusCode': response.statusCode};
   }
 }

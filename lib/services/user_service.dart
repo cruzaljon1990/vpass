@@ -80,6 +80,7 @@ class UserService {
     int? page = 1,
     String? type = 'driver',
     String? name,
+    int? status,
   }) async {
     String url = dotenv.get('API_URL') + 'user?page=' + page.toString();
     if (type != null) {
@@ -87,6 +88,9 @@ class UserService {
     }
     if (name != null) {
       url += '&name=' + name.toString();
+    }
+    if (status != null) {
+      url += '&status=' + status.toString();
     }
 
     final response = await http.get(
@@ -156,6 +160,9 @@ class UserService {
       },
     );
     SharedPreferencesService.remove('session_token');
+    SharedPreferencesService.remove('session_user_type');
+    SharedPreferencesService.remove('session_user_status');
+    SharedPreferencesService.remove('session_user_id');
 
     // if (response.statusCode == 200) {
     //   SharedPreferencesService.remove('session_token');
@@ -164,21 +171,15 @@ class UserService {
   }
 
   static delete(String id) async {
-    if (SharedPreferencesService.getString('session_user_type') == 'admin') {
-      final response = await http.delete(
-        Uri.parse(dotenv.get('API_URL') + 'user/' + id),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization':
-              'Bearer ' + SharedPreferencesService.getString('session_token')
-        },
-      );
+    final response = await http.delete(
+      Uri.parse(dotenv.get('API_URL') + 'user/' + id),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization':
+            'Bearer ' + SharedPreferencesService.getString('session_token')
+      },
+    );
 
-      if (response.statusCode == 200) {
-        SharedPreferencesService.remove('session_token');
-        return true;
-      }
-    }
-    return false;
+    return {'statusCode': response.statusCode};
   }
 }

@@ -14,7 +14,8 @@ class UserModel {
   late DateTime? birthday;
   late int age;
   late bool? hasVehiclesInside;
-  late bool? isStaff;
+  late bool? is_vip;
+  late bool? is_super;
   late int? status;
   late List<dynamic>? vehicles;
 
@@ -29,7 +30,8 @@ class UserModel {
       required this.birthday,
       required this.age,
       required this.hasVehiclesInside,
-      required this.isStaff,
+      required this.is_vip,
+      required this.is_super,
       required this.status,
       required this.vehicles});
 
@@ -45,13 +47,14 @@ class UserModel {
       birthday: DateTime.parse(json['birthday']),
       age: json['age'],
       hasVehiclesInside: json['has_vehicles_inside'],
-      isStaff: json['is_staff'],
+      is_vip: json['is_vip'],
+      is_super: json['is_super'],
       status: json['status'],
       vehicles: json['vehicles'],
     );
   }
 
-  static parseData(List<dynamic> data) {
+  static List<UserModel> parseData(List<dynamic> data) {
     final parsed = data.cast<Map<String, dynamic>>();
     return (parsed.map((json) {
       UserModel user = UserModel.fromJson(json);
