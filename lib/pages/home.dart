@@ -348,13 +348,13 @@ class _HomeState extends State<Home> {
               ),
               if (inactive_users_count > 0) ...[
                 Positioned(
-                  right: 20,
-                  top: 20,
+                  right: 12,
+                  bottom: 24,
                   child: Container(
                     padding: EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.blue[700],
+                      borderRadius: BorderRadius.circular(25),
                     ),
                     constraints: BoxConstraints(
                       minWidth: 20,
