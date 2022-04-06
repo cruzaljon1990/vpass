@@ -45,6 +45,7 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    getAdminNotifs();
     intervals = Timer.periodic(const Duration(minutes: 1), (timer) async {
       await getAdminNotifs();
     });
@@ -183,6 +184,7 @@ class _HomeState extends State<Home> {
                       type: PageTransitionType.rightToLeftWithFade,
                       child: User(
                         type: 'driver',
+                        status: 1,
                       ),
                     ),
                   );
@@ -232,7 +234,10 @@ class _HomeState extends State<Home> {
                         context,
                         PageTransition(
                           type: PageTransitionType.rightToLeftWithFade,
-                          child: User(status: 1, type: 'admin'),
+                          child: User(
+                            status: 1,
+                            type: 'admin',
+                          ),
                         ),
                       );
                     },

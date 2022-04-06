@@ -20,7 +20,7 @@ import 'package:vpass/services/user_service.dart';
 
 class User extends StatefulWidget {
   String? type = 'driver';
-  int? status;
+  int? status = 1;
   User({Key? key, this.type, this.status}) : super(key: key);
 
   @override
@@ -140,9 +140,11 @@ class _UserState extends State<User> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            widget.type == 'driver'
-                ? 'Drivers'
-                : (widget.type == 'guard' ? 'Guards' : 'Inactives'),
+            widget.status == 1
+                ? (widget.type == 'driver'
+                    ? 'Drivers'
+                    : (widget.type == 'guard' ? 'Guards' : 'Admins'))
+                : 'Inactives',
           ),
           actions: [
             IconButton(
