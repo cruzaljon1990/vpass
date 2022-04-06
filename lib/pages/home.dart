@@ -45,7 +45,7 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    intervals = Timer.periodic(const Duration(seconds: 1), (timer) async {
+    intervals = Timer.periodic(const Duration(minutes: 1), (timer) async {
       await getAdminNotifs();
     });
     super.initState();
@@ -348,13 +348,14 @@ class _HomeState extends State<Home> {
               ),
               if (inactive_users_count > 0) ...[
                 Positioned(
-                  right: 12,
-                  bottom: 24,
+                  right: 7,
+                  bottom: 22,
                   child: Container(
-                    padding: EdgeInsets.all(6),
+                    padding:
+                        EdgeInsets.only(top: 7, bottom: 7, left: 10, right: 10),
                     decoration: BoxDecoration(
                       color: Colors.blue[700],
-                      borderRadius: BorderRadius.circular(25),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     constraints: BoxConstraints(
                       minWidth: 20,
@@ -364,7 +365,7 @@ class _HomeState extends State<Home> {
                       inactive_users_count.toString(),
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 8,
+                        fontSize: 15,
                       ),
                       textAlign: TextAlign.center,
                     ),
