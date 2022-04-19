@@ -116,6 +116,8 @@ class _LoggedInAppBarState extends State<LoggedInAppBar> {
       return AppBar(title: const Text('Log Information'));
     } else if (widget.page == 'AddLogView') {
       return AppBar(title: const Text('Add Visitor Log'));
+    } else if (widget.page == 'TermsAndConditions') {
+      return AppBar(title: const Text('Terms and Conditions'));
     } else {
       return AppBar(title: const Text('VPass'));
     }

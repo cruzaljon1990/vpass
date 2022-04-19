@@ -5,6 +5,7 @@ class LogModel {
   late String? firstname;
   late String? middlename;
   late String? lastname;
+  late String? reason;
   late bool? is_visitor;
   late DateTime? time_in;
   late bool? is_in;
@@ -19,6 +20,7 @@ class LogModel {
     required this.firstname,
     required this.middlename,
     required this.lastname,
+    required this.reason,
     required this.is_visitor,
     required this.time_in,
     required this.is_in,
@@ -34,6 +36,7 @@ class LogModel {
       firstname: json['firstname'],
       middlename: json['middlename'],
       lastname: json['lastname'],
+      reason: json['reason'],
       is_visitor: json['is_visitor'],
       time_in: DateTime.parse(json['time_in'] ?? ''),
       is_in: json['is_in'],

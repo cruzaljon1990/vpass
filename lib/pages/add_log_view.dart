@@ -24,6 +24,7 @@ class _LogViewState extends State<AddLogView> {
   TextEditingController txtLastname = TextEditingController();
   TextEditingController txtModel = TextEditingController();
   TextEditingController txtPlateNo = TextEditingController();
+  TextEditingController txtReason = TextEditingController();
   bool? is_parking = false;
 
   @override
@@ -38,6 +39,7 @@ class _LogViewState extends State<AddLogView> {
     txtLastname.text = '';
     txtModel.text = '';
     txtPlateNo.text = '';
+    txtReason.text = '';
   }
 
   @override
@@ -148,6 +150,24 @@ class _LogViewState extends State<AddLogView> {
                   ),
                   TableRow(
                     children: [
+                      const Padding(
+                        padding: EdgeInsets.only(
+                          top: 13,
+                          right: 10,
+                        ),
+                        child: Text(
+                          'Reason:',
+                          textAlign: TextAlign.end,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      TextField(controller: txtReason),
+                    ],
+                  ),
+                  TableRow(
+                    children: [
                       const SizedBox.shrink(),
                       Container(
                         child: Row(
@@ -179,6 +199,7 @@ class _LogViewState extends State<AddLogView> {
                     'plate_no': txtPlateNo.text,
                     'model': txtModel.text,
                     'is_parking': is_parking,
+                    'reason': txtReason.text
                   };
                   var logUpdateResponse = await LogService.create(logData);
                   if (logUpdateResponse['statusCode'] == 200) {

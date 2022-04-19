@@ -27,6 +27,7 @@ class _LogViewState extends State<LogView> {
   TextEditingController txtLastname = TextEditingController();
   TextEditingController txtModel = TextEditingController();
   TextEditingController txtPlateNo = TextEditingController();
+  TextEditingController txtReason = TextEditingController();
 
   @override
   void initState() {
@@ -46,9 +47,9 @@ class _LogViewState extends State<LogView> {
         txtFirstname.text = log!.firstname!;
         txtMiddlename.text = log!.middlename!;
         txtLastname.text = log!.lastname!;
-
         txtModel.text = log!.model!;
         txtPlateNo.text = log!.plate_no!;
+        txtReason.text = log!.reason!;
         txtTimeIn.text =
             DateFormat('MMMM dd, yyyy hh:mm').format(log!.time_in!);
         if (log!.time_out != null) {
@@ -363,6 +364,27 @@ class _LogViewState extends State<LogView> {
                             right: 10,
                           ),
                           child: Text(
+                            'Reason:',
+                            textAlign: TextAlign.end,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        TextField(
+                          controller: txtReason,
+                          enabled: log!.time_out == null,
+                        ),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(
+                            top: 13,
+                            right: 10,
+                          ),
+                          child: Text(
                             'Log Purpose:',
                             textAlign: TextAlign.end,
                             style: TextStyle(
@@ -409,6 +431,7 @@ class _LogViewState extends State<LogView> {
                           'lastname': txtLastname.text,
                           'plate_no': txtPlateNo.text,
                           'model': txtModel.text,
+                          'reason': txtReason.text,
                         };
                         var logUpdateResponse = await LogService.update(
                           log!.id.toString(),

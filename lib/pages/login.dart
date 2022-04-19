@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vpass/pages/inactive.dart';
 import 'package:vpass/pages/profile_view.dart';
+import 'package:vpass/pages/terms_and_conditions.dart';
 import 'package:vpass/pages/user.dart';
 import 'package:vpass/pages/home.dart';
 import 'package:page_transition/page_transition.dart';
@@ -178,6 +179,18 @@ class _LoginState extends State<Login> {
                     style: TextStyle(color: Colors.grey[900]),
                   ),
                   style: ElevatedButton.styleFrom(primary: Colors.grey[300]),
+                ),
+                TextButton(
+                  child: Text('Terms and Conditions'),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.rightToLeftWithFade,
+                        child: const TermsAndConditions(),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
